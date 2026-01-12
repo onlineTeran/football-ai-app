@@ -2,11 +2,19 @@ import streamlit as st
 from supabase import create_client
 from datetime import datetime
 
-# 👇 Імпорт ключів
-from my_secrets import SUPABASE_URL, SUPABASE_PUBLIC_KEY, AFFILIATE_LINK
-
+# --- НАЛАШТУВАННЯ СТОРІНКИ ---
 st.set_page_config(page_title="Football Portal 2.0", page_icon="⚽", layout="wide")
 
+# --- РОЗУМНИЙ ІМПОРТ КЛЮЧІВ ---
+# Спроба 1: Імпорт локально (якщо ми на комп'ютері)
+try:
+    from my_secrets import SUPABASE_URL, SUPABASE_PUBLIC_KEY, AFFILIATE_LINK
+# Спроба 2: Якщо файлу немає, беремо з хмари Streamlit Secrets (якщо ми в інтернеті)
+except ImportError:
+    SUPABASE_URL = st.secrets["SUPABASE_URL"]
+    SUPABASE_PUBLIC_KEY = st.secrets["SUPABASE_PUBLIC_KEY"]
+    AFFILIATE_LINK = st.secrets["AFFILIATE_LINK"]
+    
 @st.cache_resource
 def init_db():
     # Для сайту використовуємо PUBLIC KEY (тільки читання)
